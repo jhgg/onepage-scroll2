@@ -1,9 +1,9 @@
 {
-  "name": "onepage-scroll",
-  "version": "1.2.2",
-  "author": "Pete R",
+  "name": "onepage-scroll2",
+  "version": "0.1",
+  "author": "Jake H",
   "main": [
-    "jquery.onepage-scroll.js",
+    "onepage-scroll2.js",
     "onepage-scroll.css"
   ],
   "ignore": [
