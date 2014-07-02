@@ -46,9 +46,8 @@
         trigger('swipeUp');
       }
       if (deltaY <= -50) {
-        trigger('swipeDown');
+        return trigger('swipeDown');
       }
-      return null;
     };
     return $this.on('touchstart', touchStart);
   };
@@ -56,6 +55,7 @@
   OnePageScroll = (function() {
     OnePageScroll.prototype._default_options = {
       sectionContainer: "section.row",
+      pageListContainer: "body",
       easing: "ease",
       animationTime: 700,
       loop: false,
@@ -68,7 +68,6 @@
       this.currentIndex = 0;
       this.$el = $(el);
       this.$sections = this.$el.find(this.options.sectionContainer);
-      this.$body = $('body');
       this.isScrolling = false;
       this.sections = this._buildSections();
       this._bindEvents();
@@ -107,18 +106,17 @@
           return function(e) {
             var tag, _ref, _ref1;
             tag = e != null ? (_ref = e.target) != null ? (_ref1 = _ref.tagName) != null ? _ref1.toLowerCase() : void 0 : void 0 : void 0;
+            if (tag === 'input' || tag === 'textarea') {
+              return;
+            }
             switch (e.which) {
               case 38:
               case 33:
-                if (tag !== 'input' && tag !== 'textarea') {
-                  _this.moveUp();
-                }
+                _this.moveUp();
                 break;
               case 40:
               case 34:
-                if (tag !== 'input' && tag !== 'textarea') {
-                  _this.moveDown();
-                }
+                _this.moveDown();
                 break;
               case 36:
                 _this.moveToIndex(0);
@@ -169,7 +167,7 @@
     };
 
     OnePageScroll.prototype._buildPageList = function() {
-      var $ul, idx, top, _fn, _i, _ref;
+      var $ul, idx, _fn, _i, _ref;
       $ul = $("<ul></ul>").addClass('onepage-pagination');
       _fn = (function(_this) {
         return function(idx) {
@@ -186,10 +184,9 @@
       for (idx = _i = 0, _ref = this.sections.length; 0 <= _ref ? _i < _ref : _i > _ref; idx = 0 <= _ref ? ++_i : --_i) {
         _fn(idx);
       }
-      this.$body.append($ul);
-      top = -$ul.height() / 2;
+      $ul.appendTo($(this.options.pageListContainer));
       $ul.find('li:first-of-type a').addClass('active');
-      return $ul.css('margin-top', top);
+      return $ul;
     };
 
     OnePageScroll.prototype._goToIndex = function(index) {
@@ -264,7 +261,7 @@
       return this._goToIndex(index);
     };
 
-    OnePageScroll.prototype.moveToSection = function(id) {
+    OnePageScroll.prototype.moveToSectionWithId = function(id) {
       var index;
       index = this._getIndexForSectionById(id);
       return this.moveToIndex(index);

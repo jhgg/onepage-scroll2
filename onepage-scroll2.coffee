@@ -32,17 +32,16 @@ $.fn.swipeEvents = ->
     trigger 'swipeUp'     if deltaY >= 50
     trigger 'swipeDown'   if deltaY <= -50
 
-    null
-
   $this.on 'touchstart', touchStart
 
 
-## This is where the magic starts
 class OnePageScroll
 
   _default_options:
     # The selector to use to find sections.
     sectionContainer: "section.row"
+    # The selector to add the page list thing to
+    pageListContainer: "body"
     # The easing function to use when scrolling between pages.
     easing: "ease"
     # How long in ms the page transition should occur.
@@ -66,7 +65,6 @@ class OnePageScroll
 
     # All the sections that we will scroll
     @$sections = @$el.find @options.sectionContainer
-    @$body = $ 'body'
 
     # Are we scrolling? Set to true/false in _transitionPage
     @isScrolling = false
@@ -97,12 +95,14 @@ class OnePageScroll
       $(document).keydown (e) =>
 
         tag = e?.target?.tagName?.toLowerCase()
+        return if tag in ['input', 'textarea']
+
         switch e.which
           when 38, 33
-            @moveUp() if tag not in ['input', 'textarea']
+            @moveUp()
 
           when 40, 34
-            @moveDown() if tag not in ['input', 'textarea']
+            @moveDown()
 
           when 36
             @moveToIndex 0
@@ -152,10 +152,10 @@ class OnePageScroll
         $li.append $a
         $ul.append $li
 
-    @$body.append $ul
-    top = -$ul.height() / 2
+    $ul.appendTo $ @options.pageListContainer
     $ul.find('li:first-of-type a').addClass('active')
-    $ul.css 'margin-top', top
+
+    $ul
 
   _goToIndex: (index) ->
     return if @isScrolling or index is @currentIndex
@@ -207,7 +207,7 @@ class OnePageScroll
     return unless @sections[index]
     @_goToIndex(index)
 
-  moveToSection: (id) ->
+  moveToSectionWithId: (id) ->
     index = @_getIndexForSectionById id
     @moveToIndex index
 
