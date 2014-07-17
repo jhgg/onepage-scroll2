@@ -46,6 +46,8 @@ class OnePageScroll
     easing: "ease"
     # How long in ms the page transition should occur.
     animationTime: 700
+    # How long to wait until scrolling again after last scroll.
+    quietPeriod: 500
     # Whether the scrolling will loop.
     loop: false
     # Whether the up/down arrow should scroll the page.
@@ -177,9 +179,9 @@ class OnePageScroll
     @$el
       .css styles
       .one 'webkitTransitionEnd otransitionend oTransitionEnd msTransitionEnd transitionend', =>
-        @isScrolling = false
         @currentIndex = index
         @options.afterMove?(index)
+        setTimeout (=> @isScrolling = false), @options.quietPeriod
 
   _getIndexForSectionById: (id) ->
     for i in [0...@sections.length]

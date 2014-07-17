@@ -58,6 +58,7 @@
       pageListContainer: "body",
       easing: "ease",
       animationTime: 700,
+      quietPeriod: 500,
       loop: false,
       keyboard: true,
       pagination: true
@@ -213,9 +214,13 @@
       return this.$el.css(styles).one('webkitTransitionEnd otransitionend oTransitionEnd msTransitionEnd transitionend', (function(_this) {
         return function() {
           var _base1;
-          _this.isScrolling = false;
           _this.currentIndex = index;
-          return typeof (_base1 = _this.options).afterMove === "function" ? _base1.afterMove(index) : void 0;
+          if (typeof (_base1 = _this.options).afterMove === "function") {
+            _base1.afterMove(index);
+          }
+          return setTimeout((function() {
+            return _this.isScrolling = false;
+          }), _this.options.quietPeriod);
         };
       })(this));
     };
